@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: playlist-ml-job-v1
+  namespace: camilosm
+  labels:
+    app: playlist-recommender-ml
+    version: v1
+spec:
+  template:
+    metadata:
+      labels:
+        app: playlist-recommender-ml
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: ml-trainer
+        image: docker.io/camilosm/playlist-ml:0.1
+        imagePullPolicy: Always
+        env:
+        - name: DATASET_PATH
+          value: "/data/2023_spotify_ds1.csv"
+        - name: MODEL_OUTPUT_PATH
+          value: "/model/playlist_rules.pkl"
+        - name: METADATA_OUTPUT_PATH
+          value: "/model/model_metadata.json"
+        - name: MIN_SUPPORT
+          value: "0.05"
+        - name: MIN_CONFIDENCE
+          value: "0.3"
+        volumeMounts:
+        - name: model-storage
+          mountPath: /model
+        - name: dataset-storage
+          mountPath: /data
+          readOnly: true
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2G"
+            cpu: "2000m"
+      volumes:
+      - name: model-storage
+        persistentVolumeClaim:
+          claimName: playlist-model-pvc
+      - name: dataset-storage
+        hostPath:
+          path: /home/datasets/spotify
+          type: Directory

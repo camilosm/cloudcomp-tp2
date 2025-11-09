@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: playlist-model-pvc
+  namespace: camilosm
+spec:
+  selector:
+    matchLabels:
+      namespace: camilosm
+  accessModes:
+    - ReadWriteMany
+  storageClassName: default-storage-class-camilosm
+  resources:
+    requests:
+      storage: 1Gi

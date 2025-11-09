@@ -1,0 +1,9 @@
+# Git repository for ArgoCD - Only Kubernetes manifests
+# This repository should contain ONLY the kubernetes/ directory
+
+# Ignore everything in root
+/*
+
+# Except kubernetes directory and this file
+!kubernetes/
+!.gitignore

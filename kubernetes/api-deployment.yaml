@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: playlist-api-deployment
+  namespace: camilosm
+  labels:
+    app: playlist-recommender-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: playlist-recommender-api
+  template:
+    metadata:
+      labels:
+        app: playlist-recommender-api
+    spec:
+      containers:
+      - name: api-server
+        image: docker.io/camilosm/playlist-api:0.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+        env:
+        - name: FLASK_HOST
+          value: "0.0.0.0"
+        - name: FLASK_PORT
+          value: "5000"
+        - name: MODEL_PATH
+          value: "/model/playlist_rules.pkl"
+        - name: METADATA_PATH
+          value: "/model/model_metadata.json"
+        - name: MODEL_CHECK_INTERVAL
+          value: "10"
+        - name: APP_VERSION
+          value: "1.0.0"
+        volumeMounts:
+        - name: model-storage
+          mountPath: /model
+          readOnly: true
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      volumes:
+      - name: model-storage
+        persistentVolumeClaim:
+          claimName: playlist-model-pvc

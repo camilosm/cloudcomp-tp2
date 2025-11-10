@@ -1,12 +1,13 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: playlist-ml-job-v2
+  name: playlist-ml-job-v3
   namespace: camilosm
   labels:
     app: playlist-recommender-ml
     version: v1
 spec:
+  ttlSecondsAfterFinished: 10
   template:
     metadata:
       labels:

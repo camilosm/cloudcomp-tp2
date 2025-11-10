@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: playlist-ml-job-v3
+  name: playlist-ml-job-v4
   namespace: camilosm
   labels:
     app: playlist-recommender-ml
@@ -19,7 +19,7 @@ spec:
         imagePullPolicy: Always
         env:
         - name: DATASET_PATH
-          value: "/data/2023_spotify_ds1.csv"
+          value: "/data/2023_spotify_ds2.csv"
         - name: MODEL_OUTPUT_PATH
           value: "/model/playlist_rules.pkl"
         - name: METADATA_OUTPUT_PATH
